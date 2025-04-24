@@ -59,7 +59,6 @@
     - microsoft-teams
     - microsoft-office
     - teamviewer
-    - dingtalk
 
 - name: Create .nvm directory
   file:
