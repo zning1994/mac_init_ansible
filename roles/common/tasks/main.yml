@@ -1,0 +1,77 @@
+# roles/common/tasks/main.yml
+
+- name: Install Homebrew packages
+  homebrew:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - nvm
+    - pyenv
+    - pyenv-virtualenv
+    - poetry
+    - awscli
+    - nginx
+
+- name: Install Homebrew cask applications
+  homebrew_cask:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - iterm2
+    - visual-studio-code
+    - sourcetree
+    - dbeaver-community
+    - intellij-idea
+    - goland
+    - pycharm
+    - android-studio
+    - docker
+    - 1password
+    - postman
+    - mysqlworkbench
+    - lens
+    - mweb-pro
+    - anydesk
+    - wechat
+    - telegram
+    - slack
+    - lark
+    - feishu
+    - resilio-sync
+    - whatsapp
+    - chatgpt
+    - claude
+    - ollama
+    - transocks
+    - windsurf
+    - cursor
+    - grammarly-desktop
+    - microsoft-edge
+    - arc
+    - notion
+    - vlc
+    - neteasemusic
+    - pgadmin4
+    - android-file-transfer
+    - wetype
+    - tencent-meeting
+    - zoom
+    - microsoft-teams
+    - microsoft-office
+    - teamviewer
+    - dingtalk
+
+- name: Create .nvm directory
+  file:
+    path: "{{ ansible_env.HOME }}/.nvm"
+    state: directory
+    mode: '0755'
+
+- name: Add NVM configuration to .zshrc
+  blockinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    block: |
+      export NVM_DIR="$HOME/.nvm"
+      [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+      [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+    create: yes

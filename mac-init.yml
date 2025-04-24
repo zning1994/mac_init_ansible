@@ -1,0 +1,7 @@
+# mac-init.yml
+- hosts: localhost
+  become: false
+  vars:
+    homebrew_prefix: "/opt/homebrew"
+  roles:
+    - common
