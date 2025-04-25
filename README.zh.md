@@ -24,35 +24,24 @@ mac-init/
 
 ## ⚙️ 安装前准备
 
-1. **手动安装 Xcode Command Line Tools** （如未安装）：
+无需手动安装！只需运行下方一键脚本：
+
+----
+
+## 🚀 一键初始化（推荐）
+
+在项目根目录直接运行：
 
 ```bash
-xcode-select --install
+bash ./init.sh
 ```
 
-2. **安装 Homebrew**（如果还没安装）：
+该脚本会自动：
+- 检查并安装 Xcode Command Line Tools（如未安装）
+- 安装 Homebrew（如未安装）
+- 安装 Ansible（如未安装）
 
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-3. **安装 Ansible**（第一次用的话）：
-
-```bash
-brew install ansible
-```
-
----
-
-## 🚀 执行初始化
-
-### 1. 切换到项目目录
-
-```bash
-cd mac-init
-```
-
-### 2. 执行 Playbook
+完成后即可运行 Ansible Playbook：
 
 ```bash
 ansible-playbook -i inventory.yml mac-init.yml --ask-become-pass
@@ -60,7 +49,7 @@ ansible-playbook -i inventory.yml mac-init.yml --ask-become-pass
 
 执行过程中会提示输入本机用户的 sudo 密码。
 
----
+----
 
 ## 📚 初始化内容包括
 
@@ -92,7 +81,7 @@ ansible-playbook -i inventory.yml mac-init.yml --ask-become-pass
 ---
 
 ## 👨‍💻 作者
-- 配置工程设计：宁 Zhang (ChatGPT 协助)
+- 配置工程设计：张宁 (ChatGPT 协助)
 - 更新时间：2025-04
 
 ---

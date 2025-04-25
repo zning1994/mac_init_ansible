@@ -24,35 +24,24 @@ mac-init/
 
 ## ⚙️ Pre-requisites
 
-1. **Manually install Xcode Command Line Tools** (if not already installed):
-
-```bash
-xcode-select --install
-```
-
-2. **Install Homebrew** (if not already installed):
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-
-3. **Install Ansible** (if first time using):
-
-```bash
-brew install ansible
-```
+No manual pre-installation needed! The following script will help you:
 
 ---
 
-## 🚀 Execute Initialization
+## 🚀 Quick Start (Recommended)
 
-### 1. Change to project directory
+Just run the initialization script in the project root:
 
 ```bash
-cd mac-init
+bash ./init.sh
 ```
 
-### 2. Run Playbook
+This script will automatically:
+- Check and install Xcode Command Line Tools (if missing)
+- Install Homebrew (if missing)
+- Install Ansible (if missing)
+
+Once finished, you can run the Ansible playbook:
 
 ```bash
 ansible-playbook -i inventory.yml mac-init.yml --ask-become-pass
