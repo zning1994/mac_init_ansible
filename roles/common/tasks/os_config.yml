@@ -1,0 +1,136 @@
+- name: Ensure Homebrew is installed
+  stat:
+    path: /opt/homebrew/bin/brew
+  register: homebrew_check
+
+- name: Install Homebrew (if missing)
+  shell: |
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  when: not homebrew_check.stat.exists
+
+- name: Install zsh-syntax-highlighting
+  homebrew:
+    name: zsh-syntax-highlighting
+    state: present
+
+- name: Install zsh-autosuggestions
+  homebrew:
+    name: zsh-autosuggestions
+    state: present
+
+- name: Install zsh-completions
+  homebrew:
+    name: zsh-completions
+    state: present
+
+- name: Install Oh My Zsh
+  shell: |
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  args:
+    creates: ~/.oh-my-zsh
+
+- name: Configure minimal ~/.zshrc for Oh My Zsh and plugins
+  copy:
+    dest: ~/.zshrc
+    mode: '0644'
+    force: true
+    backup: true
+    content: |
+      ZSH_THEME="agnoster"
+      plugins=(
+        git
+        zsh-syntax-highlighting
+        zsh-autosuggestions
+        zsh-completions
+      )
+      source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+      source $ZSH/oh-my-zsh.sh
+
+- name: Set global git user.name
+  community.general.git_config:
+    name: user.name
+    value: "{{ git_user_name }}"
+    scope: global
+
+- name: Set global git user.email
+  community.general.git_config:
+    name: user.email
+    value: "{{ git_user_email }}"
+    scope: global
+
+- name: Check if SSH key exists
+  stat:
+    path: "{{ ssh_key_path }}"
+  register: ssh_key
+
+- name: Generate SSH key if not exists
+  command: ssh-keygen -t ed25519 -C "{{ git_user_email }}" -f {{ ssh_key_path }} -N ""
+  args:
+    creates: "{{ ssh_key_path }}"
+  when: not ssh_key.stat.exists
+
+- name: Start ssh-agent
+  shell: |
+    eval "$(ssh-agent -s)"
+  environment:
+    SSH_AUTH_SOCK: "{{ lookup('env', 'SSH_AUTH_SOCK') | default('') }}"
+  changed_when: false
+
+- name: Add SSH key to ssh-agent (macOS)
+  shell: |
+    ssh-add --apple-use-keychain {{ ssh_key_path }} || ssh-add {{ ssh_key_path }}
+  environment:
+    SSH_AUTH_SOCK: "{{ lookup('env', 'SSH_AUTH_SOCK') | default('') }}"
+  args:
+    executable: /bin/bash
+
+- name: Ensure ~/.ssh directory exists
+  file:
+    path: "~/.ssh"
+    state: directory
+    mode: '0700'
+
+- name: Configure ~/.ssh/config file (GitHub recommended)
+  copy:
+    dest: "~/.ssh/config"
+    mode: '0600'
+    content: |
+      Host github.com
+        HostName github.com
+        User git
+        IdentityFile {{ ssh_key_path }}
+        AddKeysToAgent yes
+        UseKeychain yes
+
+    - name: Start ssh-agent
+      shell: |
+        eval "$(ssh-agent -s)"
+      environment:
+        SSH_AUTH_SOCK: "{{ lookup('env', 'SSH_AUTH_SOCK') | default('') }}"
+      changed_when: false
+
+    - name: Add SSH key to ssh-agent (macOS)
+      shell: |
+        ssh-add --apple-use-keychain {{ ssh_key_path }} || ssh-add {{ ssh_key_path }}
+      environment:
+        SSH_AUTH_SOCK: "{{ lookup('env', 'SSH_AUTH_SOCK') | default('') }}"
+      args:
+        executable: /bin/bash
+
+    - name: Ensure ~/.ssh directory exists
+      file:
+        path: "~/.ssh"
+        state: directory
+        mode: '0700'
+
+    - name: Configure ~/.ssh/config file (GitHub recommended)
+      copy:
+        dest: "~/.ssh/config"
+        mode: '0600'
+        content: |
+          Host github.com
+            HostName github.com
+            User git
+            IdentityFile {{ ssh_key_path }}
+            AddKeysToAgent yes
+            UseKeychain yes
