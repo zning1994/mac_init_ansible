@@ -1,4 +1,20 @@
 # roles/common/tasks/main.yml
+
+- name: Install CocoaPods
+  homebrew:
+    name: cocoapods
+    state: present
+
+- name: Switch Xcode path
+  become: true
+  command: sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+  ignore_errors: true
+
+- name: Run Xcode first launch setup
+  become: true
+  command: sudo xcodebuild -runFirstLaunch
+  ignore_errors: true
+
 - name: Ensure development directory exists
   file:
     path: "{{ ansible_env.HOME }}/development"
