@@ -1,10 +1,45 @@
 # roles/common/tasks/main.yml
+- name: Ensure development directory exists
+  file:
+    path: "{{ ansible_env.HOME }}/development"
+    state: directory
+    mode: '0755'
+
+- name: Download Flutter SDK zip
+  get_url:
+    url: https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_3.29.3-stable.zip
+    dest: "{{ ansible_env.HOME }}/development/flutter.zip"
+    mode: '0644'
+
+- name: Unarchive Flutter SDK
+  unarchive:
+    src: "{{ ansible_env.HOME }}/development/flutter.zip"
+    dest: "{{ ansible_env.HOME }}/development/"
+    remote_src: yes
+    creates: "{{ ansible_env.HOME }}/development/flutter/bin/flutter"
+
+- name: Add Flutter to PATH in .zshrc
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: 'export PATH="$HOME/development/flutter/bin:$PATH"'
+    create: yes
+
+- name: Run flutter doctor to initialize
+  shell: "{{ ansible_env.HOME }}/development/flutter/bin/flutter doctor"
+  environment:
+    PATH: "{{ ansible_env.HOME }}/development/flutter/bin:{{ ansible_env.PATH }}"
+
+- name: Tap FVM formula
+  homebrew_tap:
+    name: leoafarias/fvm
+    state: present
 
 - name: Install Homebrew packages
   homebrew:
     name: "{{ item }}"
     state: present
   loop:
+    - fvm
     - nvm
     - pyenv
     - pyenv-virtualenv
