@@ -4,7 +4,7 @@ This project uses Ansible to quickly set up a development environment on a brand
 
 ---
 
-🌐 [中文版说明（Chinese Version Guide）](./README_zh_cn.md)
+🌐 [中文版说明（Chinese Version Guide）](./README.zh.md)
 
 ---
 
