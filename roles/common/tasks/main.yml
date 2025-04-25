@@ -145,27 +145,6 @@
     executable: /bin/bash
   when: not gvm_stat.stat.exists
 
-- name: 初始化 gvm 环境变量
-  lineinfile:
-    path: "{{ ansible_env.HOME }}/.zshrc"
-    line: '[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"'
-    create: yes
-
-- name: 安装 Go 1.22.2（如未安装）
-  shell: |
-    source "$HOME/.gvm/scripts/gvm" && gvm list | grep -q 'go1.22.2' || (gvm install go1.22.2 && gvm use go1.22.2 --default)
-  args:
-    executable: /bin/bash
-  environment:
-    GVM_NO_UPDATE_PROFILE: '1'
-  when: gvm_stat.stat.exists
-
-- name: 确保 Go 1.22.2 的 PATH 写入 .zshrc
-  lineinfile:
-    path: "{{ ansible_env.HOME }}/.zshrc"
-    line: 'export PATH="$HOME/.gvm/gos/go1.22.2/bin:$PATH"'
-    create: yes
-
 - name: Install Rosetta 2
   become: true
   command: sudo softwareupdate --install-rosetta --agree-to-license
