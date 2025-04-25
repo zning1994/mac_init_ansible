@@ -145,6 +145,34 @@
     executable: /bin/bash
   when: not gvm_stat.stat.exists
 
+- name: 安装 go（gvm 依赖，后续会卸载）
+  homebrew:
+    name: go
+    state: present
+
+- name: 初始化 gvm 环境变量
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: '[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"'
+    create: yes
+
+- name: 用 gvm 安装 go1.21 和 go1.22，并设 go1.22 为默认
+  shell: |
+    source "$HOME/.gvm/scripts/gvm"
+    gvm install go1.21
+    gvm install go1.22
+    gvm use go1.22 --default
+  args:
+    executable: /bin/bash
+  environment:
+    GVM_NO_UPDATE_PROFILE: '1'
+  when: gvm_stat.stat.exists
+
+- name: 卸载 brew 安装的 go
+  homebrew:
+    name: go
+    state: absent
+
 - name: Install Rosetta 2
   become: true
   command: sudo softwareupdate --install-rosetta --agree-to-license
