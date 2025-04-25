@@ -81,7 +81,6 @@
     - goland
     - pycharm
     - android-studio
-    - docker
     - 1password
     - postman
     - mysqlworkbench
@@ -111,6 +110,7 @@
     - android-file-transfer
     - wetype
     - tencent-meeting
+    - docker
     - zoom
     - microsoft-teams
     - microsoft-office
