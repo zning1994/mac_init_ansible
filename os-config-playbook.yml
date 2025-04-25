@@ -1,5 +1,7 @@
 - hosts: localhost
   become: false
-  roles:
-    - role: common
-      tasks_from: os_config.yml
+  vars_files:
+    - roles/common/defaults/main.yml
+  tasks:
+    - import_tasks: roles/common/tasks/os_config.yml
+
