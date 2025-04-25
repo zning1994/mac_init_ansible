@@ -59,6 +59,7 @@
     - microsoft-teams
     - microsoft-office
     - teamviewer
+    - adobe-creative-cloud
 
 - name: Create .nvm directory
   file:
