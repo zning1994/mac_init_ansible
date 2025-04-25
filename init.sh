@@ -35,5 +35,5 @@ echo "🧪 版本确认："
 ansible --version
 brew --version
 
-echo "✅ 初始化完成！你现在可以运行："
+echo "✅ 初始化完成！请确保你在 App Store 安装好 Xcode，然后运行："
 echo "    ansible-playbook -i inventory.yml mac-init.yml --ask-become-pass"
