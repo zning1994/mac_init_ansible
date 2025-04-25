@@ -67,6 +67,7 @@
     - poetry
     - awscli
     - nginx
+    - bison
 
 - name: Install Homebrew cask applications
   homebrew_cask:
@@ -130,6 +131,39 @@
       export NVM_DIR="$HOME/.nvm"
       [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
       [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+    create: yes
+
+# ==== Go & GVM 自动化安装 ====
+- name: 检查 gvm 是否已安装
+  stat:
+    path: "{{ ansible_env.HOME }}/.gvm/bin/gvm"
+  register: gvm_stat
+
+- name: 安装 gvm（Go Version Manager）
+  shell: bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+  args:
+    executable: /bin/bash
+  when: not gvm_stat.stat.exists
+
+- name: 初始化 gvm 环境变量
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: '[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"'
+    create: yes
+
+- name: 安装 Go 1.22.2（如未安装）
+  shell: |
+    source "$HOME/.gvm/scripts/gvm" && gvm list | grep -q 'go1.22.2' || (gvm install go1.22.2 && gvm use go1.22.2 --default)
+  args:
+    executable: /bin/bash
+  environment:
+    GVM_NO_UPDATE_PROFILE: '1'
+  when: gvm_stat.stat.exists
+
+- name: 确保 Go 1.22.2 的 PATH 写入 .zshrc
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: 'export PATH="$HOME/.gvm/gos/go1.22.2/bin:$PATH"'
     create: yes
 
 - name: Install Rosetta 2
