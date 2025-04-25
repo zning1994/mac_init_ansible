@@ -102,20 +102,6 @@
         AddKeysToAgent yes
         UseKeychain yes
 
-    - name: Start ssh-agent
-      shell: |
-        eval "$(ssh-agent -s)"
-      environment:
-        SSH_AUTH_SOCK: "{{ lookup('env', 'SSH_AUTH_SOCK') | default('') }}"
-      changed_when: false
-
-    - name: Add SSH key to ssh-agent (macOS)
-      shell: |
-        ssh-add --apple-use-keychain {{ ssh_key_path }} || ssh-add {{ ssh_key_path }}
-      environment:
-        SSH_AUTH_SOCK: "{{ lookup('env', 'SSH_AUTH_SOCK') | default('') }}"
-      args:
-        executable: /bin/bash
 
     - name: Ensure ~/.ssh directory exists
       file:
