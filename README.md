@@ -72,24 +72,59 @@ You will be prompted to enter your macOS user sudo password during execution.
 
 ---
 
-## 🗝️ Git/SSH Initialization
+## 🗝️ Shell & Git/SSH Environment Initialization
 
-This repository provides an automated way to initialize your Git global config and generate a secure SSH key for GitHub or other platforms.
+This repository provides an automated way to initialize your Zsh shell environment (with Oh My Zsh and plugins), as well as Git global config and SSH key for GitHub.
 
-### Usage
+### What will be set up automatically?
 
-1. Edit `os_config.yml` or use extra-vars to set your Git username and email:
+- **Homebrew** (if missing)
+- **Oh My Zsh** (unattended install)
+- **Zsh plugins**:
+  - zsh-syntax-highlighting
+  - zsh-autosuggestions
+  - zsh-completions
+- **Minimal `.zshrc`** with:
+  ```zsh
+  ZSH_THEME="agnoster"
+  plugins=(
+    git
+    zsh-syntax-highlighting
+    zsh-autosuggestions
+    zsh-completions
+  )
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  source $ZSH/oh-my-zsh.sh
+  ```
+- **Git global user.name & user.email** (set via variables)
+- **SSH key (ed25519)** auto-generated and added to ssh-agent
+- **GitHub SSH config** (`~/.ssh/config`) auto-generated
+
+### How to use
+
+1. (Optional) Edit `roles/common/vars/main.yml` to set your `git_user_name`, `git_user_email`, and `ssh_key_path`.
+2. Run:
    ```bash
-   ansible-playbook -i inventory.yml os_config.yml \
-     -e "git_user_name=YourName git_user_email=your@email.com"
+   ansible-playbook -i inventory.yml mac-init.yml
    ```
-   Or edit the `vars` section in `os_config.yml` directly.
+3. After completion:
+   - Open a new terminal window to activate the new Zsh config.
+   - Add your public SSH key (`~/.ssh/id_ed25519.pub`) to your GitHub account.
 
-2. This will:
-   - Set your global Git user.name and user.email
-   - Generate an ed25519 SSH key (with your email as comment) at `~/.ssh/id_ed25519` if not already present
+#### Run only the shell/git/ssh initialization
 
-3. After running, you can add the public key (`~/.ssh/id_ed25519.pub`) to your GitHub/GitLab account.
+If you only want to set up the shell environment (Oh My Zsh, plugins, git, ssh), run:
+
+```bash
+ansible-playbook -i inventory.yml os-config-playbook.yml
+```
+
+This will only execute the tasks in `roles/common/tasks/os_config.yml` and will not run the rest of the main initialization tasks.
+
+### Requirements
+
+- macOS with sudo privileges
+- Internet connection (for Homebrew, Oh My Zsh, and plugins)
 
 ---
 
