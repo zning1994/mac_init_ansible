@@ -5,6 +5,11 @@
     name: cocoapods
     state: present
 
+- name: Agreement Xcode license
+  become: true
+  command: sudo xcodebuild -license accept
+  ignore_errors: true
+
 - name: Switch Xcode path
   become: true
   command: sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
