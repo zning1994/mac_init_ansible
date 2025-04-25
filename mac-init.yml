@@ -1,8 +1,6 @@
 # mac-init.yml
 - hosts: localhost
-  become: true
-  become_method: sudo
-  become_user: root
+  become: false
   vars:
     homebrew_prefix: "/opt/homebrew"
   roles:
