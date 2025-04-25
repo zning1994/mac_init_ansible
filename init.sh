@@ -36,4 +36,4 @@ ansible --version
 brew --version
 
 echo "✅ 初始化完成！你现在可以运行："
-echo "    ansible-playbook -i inventory.yml mac-init.yml"
+echo "    ansible-playbook -i inventory.yml mac-init.yml --ask-become-pass"
