@@ -1,0 +1,24 @@
+---
+- name: 拉取并运行 MySQL Docker 容器
+  hosts: localhost
+  become: true
+  vars_files:
+    - vars/mysql_secret.yml
+
+  tasks:
+    - name: 拉取 MySQL 镜像
+      community.docker.docker_image:
+        name: mysql
+        tag: "8.0"
+        source: pull
+
+    - name: 运行 MySQL 容器
+      community.docker.docker_container:
+        name: mysql
+        image: mysql:8.0
+        state: started
+        restart_policy: always
+        env:
+          MYSQL_ROOT_PASSWORD: "{{ mysql_root_password }}"
+        ports:
+          - "3306:3306"
