@@ -130,3 +130,8 @@
       [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
       [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
     create: yes
+
+- name: Install Rosetta 2
+  become: true
+  command: sudo softwareupdate --install-rosetta --agree-to-license
+  ignore_errors: true
