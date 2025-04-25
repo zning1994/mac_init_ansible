@@ -49,12 +49,43 @@ ansible-playbook -i inventory.yml mac-init.yml --ask-become-pass
 
 执行过程中会提示输入本机用户的 sudo 密码。
 
+---
+
+## 🐳 使用 Ansible Playbook 自动部署 MySQL（Docker 版）
+
+本项目已内置 playbook 支持一键拉取并运行 MySQL Docker 容器，且通过 Ansible Vault 加密管理 root 密码，安全可靠。
+
+### 步骤一：配置 MySQL 密码变量并加密
+
+1. 编辑 `vars/mysql_secret.yml`，内容如下（请替换为你自己的密码）：
+   ```yaml
+   mysql_root_password: yourpassword
+   ```
+2. 用 Ansible Vault 加密变量文件：
+   ```bash
+   ansible-vault encrypt vars/mysql_secret.yml
+   ```
+
+### 步骤二：运行 MySQL Docker playbook
+
+执行如下命令启动 MySQL 容器（首次需安装 community.docker 依赖）：
+```bash
+ansible-galaxy collection install community.docker
+ansible-playbook docker-mysql-playbook.yml --ask-vault-pass
+```
+
+### 主要内容说明
+
+- playbook 文件：`docker-mysql-playbook.yml`
+- 密码变量加密文件：`vars/mysql_secret.yml`
+- 默认会将 MySQL 8.0 容器端口映射到本地 3306，root 密码安全存储
+
 ----
 
 ## 📚 初始化内容包括
 
 - 安装 Homebrew 及常用 CLI 工具（nvm, pyenv, poetry 等）
-- 安装常用 GUI 应用（VSCode, Docker, Android Studio, 1Password 等）
+- 安装常用 GUI 应用（VSCode, Docker, Android Studio, 1Password, 微信, 企业微信等）
 - 下载并解压 Flutter SDK (3.29.3)
 - 配置 Flutter 到 PATH，初始化 `flutter doctor`
 - 安装并配置 FVM（Flutter 版本管理器）
@@ -143,4 +174,3 @@ ansible-playbook -i inventory.yml os-config-playbook.yml
 ---
 
 > 保持环境干净，提升开发效率，从第一天开始！💻
-

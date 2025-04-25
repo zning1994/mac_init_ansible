@@ -54,7 +54,7 @@ You will be prompted to enter your macOS user sudo password during execution.
 ## 📚 Initialization Contents
 
 - Install Homebrew and common CLI tools (nvm, pyenv, poetry, etc.)
-- Install common GUI applications (VSCode, Docker, Android Studio, 1Password, etc.)
+- Install common GUI applications (Google Chrome, iTerm2, VSCode, Sourcetree, DBeaver, IntelliJ IDEA, GoLand, PyCharm, Android Studio, 1Password, Postman, MySQL Workbench, Lens, MWeb Pro, AnyDesk, WeChat, WeChat Work, Telegram, Slack, Lark, Feishu, Resilio Sync, WhatsApp, ChatGPT, Claude)
 - Download and unzip Flutter SDK (3.29.3)
 - Configure Flutter into PATH and initialize via `flutter doctor`
 - Install and configure FVM (Flutter Version Manager)
