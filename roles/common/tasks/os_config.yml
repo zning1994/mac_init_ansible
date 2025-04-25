@@ -53,6 +53,7 @@
       fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
       autoload -U compinit && compinit
       source "$ZSH/oh-my-zsh.sh"
+      export PATH="$HOME/development/flutter/bin:$PATH"
 
 - name: Set global git user.name
   community.general.git_config:
