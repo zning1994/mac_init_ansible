@@ -1,0 +1,64 @@
+---
+- name: System Git Config and SSH Key Initialization
+  hosts: localhost
+  gather_facts: no
+  vars:
+    git_user_name: "Your Name"
+    git_user_email: "your.email@example.com"
+    ssh_key_path: "~/.ssh/id_ed25519"
+  tasks:
+    - name: Set global git user.name
+      community.general.git_config:
+        name: user.name
+        value: "{{ git_user_name }}"
+        scope: global
+
+    - name: Set global git user.email
+      community.general.git_config:
+        name: user.email
+        value: "{{ git_user_email }}"
+        scope: global
+
+    - name: Check if SSH key exists
+      stat:
+        path: "{{ ssh_key_path }}"
+      register: ssh_key
+
+    - name: Generate SSH key if not exists
+      command: ssh-keygen -t ed25519 -C "{{ git_user_email }}" -f {{ ssh_key_path }} -N ""
+      args:
+        creates: "{{ ssh_key_path }}"
+      when: not ssh_key.stat.exists
+
+    - name: Start ssh-agent
+      shell: |
+        eval "$(ssh-agent -s)"
+      environment:
+        SSH_AUTH_SOCK: "{{ lookup('env', 'SSH_AUTH_SOCK') | default('') }}"
+      changed_when: false
+
+    - name: Add SSH key to ssh-agent (macOS)
+      shell: |
+        ssh-add --apple-use-keychain {{ ssh_key_path }} || ssh-add {{ ssh_key_path }}
+      environment:
+        SSH_AUTH_SOCK: "{{ lookup('env', 'SSH_AUTH_SOCK') | default('') }}"
+      args:
+        executable: /bin/bash
+
+    - name: Ensure ~/.ssh directory exists
+      file:
+        path: "~/.ssh"
+        state: directory
+        mode: '0700'
+
+    - name: Configure ~/.ssh/config file (GitHub recommended)
+      copy:
+        dest: "~/.ssh/config"
+        mode: '0600'
+        content: |
+          Host github.com
+            HostName github.com
+            User git
+            IdentityFile {{ ssh_key_path }}
+            AddKeysToAgent yes
+            UseKeychain yes

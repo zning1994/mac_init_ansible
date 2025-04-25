@@ -72,6 +72,27 @@ ansible-playbook -i inventory.yml mac-init.yml --ask-become-pass
 
 ---
 
+## 🗝️ Git/SSH 初始化
+
+本仓库支持一键自动完成 Git 全局配置及 SSH key 生成，便于推送代码到 GitHub/GitLab 等平台。
+
+### 使用方法
+
+1. 编辑 `os_config.yml` 或通过 extra-vars 指定用户名和邮箱：
+   ```bash
+   ansible-playbook -i inventory.yml os_config.yml \
+     -e "git_user_name=你的名字 git_user_email=你的邮箱"
+   ```
+   也可以直接修改 `os_config.yml` 里的 vars 部分。
+
+2. 该任务会：
+   - 设置全局 Git user.name 和 user.email
+   - 生成 ed25519 算法 SSH key（注释为邮箱），默认路径为 `~/.ssh/id_ed25519`（如已存在则跳过）
+
+3. 运行后，可将 `~/.ssh/id_ed25519.pub` 公钥添加到你的代码托管平台账户。
+
+---
+
 ## ✨ 后续可扩展
 
 - 支持自动安装 JetBrains Toolbox，统一管理 IntelliJ IDEA, GoLand, PyCharm

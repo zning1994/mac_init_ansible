@@ -72,6 +72,27 @@ You will be prompted to enter your macOS user sudo password during execution.
 
 ---
 
+## 🗝️ Git/SSH Initialization
+
+This repository provides an automated way to initialize your Git global config and generate a secure SSH key for GitHub or other platforms.
+
+### Usage
+
+1. Edit `os_config.yml` or use extra-vars to set your Git username and email:
+   ```bash
+   ansible-playbook -i inventory.yml os_config.yml \
+     -e "git_user_name=YourName git_user_email=your@email.com"
+   ```
+   Or edit the `vars` section in `os_config.yml` directly.
+
+2. This will:
+   - Set your global Git user.name and user.email
+   - Generate an ed25519 SSH key (with your email as comment) at `~/.ssh/id_ed25519` if not already present
+
+3. After running, you can add the public key (`~/.ssh/id_ed25519.pub`) to your GitHub/GitLab account.
+
+---
+
 ## ✨ Future Extensions
 
 - Support auto-installation of JetBrains Toolbox to manage IntelliJ IDEA, GoLand, PyCharm
