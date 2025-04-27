@@ -55,6 +55,21 @@
     name: leoafarias/fvm
     state: present
 
+- name: Tap hashicorp/tap
+  homebrew_tap:
+    name: hashicorp/tap
+    state: present
+
+- name: Install Terraform from hashicorp/tap
+  homebrew:
+    name: hashicorp/tap/terraform
+    state: present
+
+- name: Install Terragrunt
+  homebrew:
+    name: terragrunt
+    state: present
+
 - name: Install Homebrew packages
   homebrew:
     name: "{{ item }}"
