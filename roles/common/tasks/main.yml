@@ -84,6 +84,7 @@
     - nginx
     - bison
     - mysql-client
+    - helm
 
 - name: Install Homebrew cask applications
   homebrew_cask:
