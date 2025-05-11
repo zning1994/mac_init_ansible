@@ -83,6 +83,7 @@
     - awscli
     - nginx
     - bison
+    - mysql-client
 
 - name: Install Homebrew cask applications
   homebrew_cask:
