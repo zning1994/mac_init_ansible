@@ -134,6 +134,7 @@
     - microsoft-office
     - teamviewer
     - adobe-creative-cloud
+    - google-cloud-sdk
 
 - name: Create .nvm directory
   file:
