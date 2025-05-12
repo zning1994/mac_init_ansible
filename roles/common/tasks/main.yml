@@ -85,6 +85,7 @@
     - bison
     - mysql-client
     - helm
+    - pipx
 
 - name: Install Homebrew cask applications
   homebrew_cask:
