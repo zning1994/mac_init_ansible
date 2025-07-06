@@ -138,7 +138,6 @@
     - teamviewer
     - adobe-creative-cloud
     - google-cloud-sdk
-    - pgadmin4
 
 - name: Create .nvm directory
   file:
