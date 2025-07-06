@@ -86,6 +86,7 @@
     - mysql-client
     - helm
     - pipx
+    - postgresql
 
 - name: Install Homebrew cask applications
   homebrew_cask:
@@ -137,6 +138,7 @@
     - teamviewer
     - adobe-creative-cloud
     - google-cloud-sdk
+    - pgadmin4
 
 - name: Create .nvm directory
   file:
