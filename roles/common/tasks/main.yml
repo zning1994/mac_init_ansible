@@ -138,6 +138,7 @@
     - teamviewer
     - adobe-creative-cloud
     - google-cloud-sdk
+    - mactex
 
 - name: Create .nvm directory
   file:
