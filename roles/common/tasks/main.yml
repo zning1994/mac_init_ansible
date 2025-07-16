@@ -87,6 +87,7 @@
     - helm
     - pipx
     - postgresql
+    - gh
 
 - name: Install Homebrew cask applications
   homebrew_cask:
