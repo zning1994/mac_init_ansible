@@ -94,6 +94,7 @@
     name: "{{ item }}"
     state: present
   loop:
+    - 1password-cli
     - google-chrome
     - iterm2
     - visual-studio-code
