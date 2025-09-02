@@ -110,21 +110,3 @@
         IdentityFile {{ ssh_key_path }}
         AddKeysToAgent yes
         UseKeychain yes
-
-- name: Ensure ~/.ssh directory exists
-  file:
-    path: "~/.ssh"
-    state: directory
-    mode: '0700'
-
-- name: Configure ~/.ssh/config file (GitHub recommended)
-  copy:
-    dest: "~/.ssh/config"
-    mode: '0600'
-    content: |
-      Host github.com
-        HostName github.com
-        User git
-        IdentityFile {{ ssh_key_path }}
-        AddKeysToAgent yes
-        UseKeychain yes
