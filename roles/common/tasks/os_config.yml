@@ -110,3 +110,101 @@
         IdentityFile {{ ssh_key_path }}
         AddKeysToAgent yes
         UseKeychain yes
+
+- name: Ensure GnuPG and pinentry-mac are installed
+  community.general.homebrew:
+    name:
+      - gnupg
+      - pinentry-mac
+    state: present
+  when: homebrew_check.stat.exists
+
+- name: Ensure ~/.gnupg directory exists
+  file:
+    path: "{{ ansible_env.HOME }}/.gnupg"
+    state: directory
+    mode: '0700'
+
+- name: Detect pinentry-mac path
+  shell: |
+    command -v pinentry-mac || echo "/opt/homebrew/bin/pinentry-mac"
+  register: pinentry_path
+  changed_when: false
+  args:
+    executable: /bin/bash
+
+- name: Configure pinentry-program in gpg-agent.conf
+  lineinfile:
+    path: "{{ ansible_env.HOME }}/.gnupg/gpg-agent.conf"
+    create: true
+    mode: '0600'
+    regexp: '^pinentry-program '
+    line: "pinentry-program {{ pinentry_path.stdout }}"
+
+- name: Restart gpg-agent
+  shell: |
+    gpgconf --kill gpg-agent || true
+    gpgconf --launch gpg-agent || true
+  changed_when: false
+
+- name: Detect gpg binary path
+  shell: |
+    command -v gpg || echo "/opt/homebrew/bin/gpg"
+  register: gpg_path
+  changed_when: false
+  args:
+    executable: /bin/bash
+
+- name: Check for existing secret key for user email
+  shell: |
+    gpg --list-secret-keys --keyid-format=long "{{ git_user_email }}" 2>/dev/null | awk '/^sec/ {print $2}' | tail -n1 | cut -d'/' -f2
+  register: existing_key_id
+  changed_when: false
+  args:
+    executable: /bin/bash
+
+- name: Generate GPG key (non-interactive) if missing
+  shell: |
+    gpg --batch --quick-generate-key "{{ git_user_name }} <{{ git_user_email }}>" ed25519 sign 0
+  when: existing_key_id.stdout | trim == ''
+
+- name: Read (latest) GPG key id
+  shell: |
+    gpg --list-secret-keys --keyid-format=long "{{ git_user_email }}" 2>/dev/null | awk '/^sec/ {print $2}' | tail -n1 | cut -d'/' -f2
+  register: gpg_key_id
+  changed_when: false
+  args:
+    executable: /bin/bash
+
+- name: Configure git to use gpg program
+  community.general.git_config:
+    name: gpg.program
+    value: "{{ gpg_path.stdout | default('/opt/homebrew/bin/gpg') }}"
+    scope: global
+
+- name: Configure git signing key
+  community.general.git_config:
+    name: user.signingkey
+    value: "{{ gpg_key_id.stdout | trim }}"
+    scope: global
+  when: gpg_key_id.stdout | trim != ''
+
+- name: Enable git commit signing
+  community.general.git_config:
+    name: commit.gpgsign
+    value: 'true'
+    scope: global
+
+- name: Enable git tag signing
+  community.general.git_config:
+    name: tag.gpgSign
+    value: 'true'
+    scope: global
+
+- name: Export ASCII-armored public key to file
+  shell: |
+    gpg --armor --export "{{ gpg_key_id.stdout | trim }}" > "{{ ansible_env.HOME }}/.gnupg/{{ gpg_key_id.stdout | trim }}.asc"
+  args:
+    executable: /bin/bash
+  when: gpg_key_id.stdout | trim != ''
+  creates: "{{ ansible_env.HOME }}/.gnupg/{{ gpg_key_id.stdout | trim }}.asc"
